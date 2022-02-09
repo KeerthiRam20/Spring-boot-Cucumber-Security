@@ -1,0 +1,287 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "RoomBook Spring Security Sample",
+    "description" : "This is a sample Spring Security API.  It is written for the \npurpose of supporting security tests. Also known as \"RoomBook\".\n",
+    "termsOfService" : "https://github.com/gingeleski/cucumber-spring-security-tests",
+    "contact" : {
+      "email" : "rg+github@kapotel.com"
+    },
+    "version" : "1.0.0"
+  },
+  "externalDocs" : {
+    "description" : "Find out more about this project",
+    "url" : "https://github.com/gingeleski/cucumber-spring-security-tests"
+  },
+  "servers" : [ {
+    "url" : "http://127.0.0.1:8000/api"
+  } ],
+  "tags" : [ {
+    "name" : "unauthenticated",
+    "description" : "No role-based access restrictions."
+  }, {
+    "name" : "ROLE_ADMIN",
+    "description" : "Access requires the ROLE_ADMIN authority."
+  }, {
+    "name" : "ROLE_HR_MGR",
+    "description" : "Access requires the ROLEE_HR_MGR authority."
+  }, {
+    "name" : "ROLE_ASSISTANT",
+    "description" : "Access requires the ROLE_ASSISTANT authority."
+  }, {
+    "name" : "ROLE_EMPLOYEE",
+    "description" : "Access requires the ROLE_EMPLOYEE authority."
+  } ],
+  "paths" : {
+    "/authenticate" : {
+      "post" : {
+        "tags" : [ "unauthenticated" ],
+        "summary" : "Authenticates user into the system",
+        "operationId" : "authenticate",
+        "requestBody" : {
+          "description" : "User credentials to authenticate with",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/LoginDTO"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation",
+            "headers" : {
+              "Authorization" : {
+                "description" : "Bearer token (JWT) will be in this response header",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Request format was invalid or contained bad characters"
+          },
+          "401" : {
+            "description" : "Request was of valid format but credentials were invalid"
+          },
+          "405" : {
+            "description" : "Unsupported request method"
+          }
+        }
+      }
+    },
+    "/rooms" : {
+      "get" : {
+        "tags" : [ "ROLE_EMPLOYEE" ],
+        "summary" : "Get information on all rooms",
+        "description" : "Get basic information about every room visible to current user",
+        "operationId" : "getRooms",
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation"
+          },
+          "401" : {
+            "description" : "Need to authenticate before accessing this"
+          },
+          "403" : {
+            "description" : "User is authenticated but has insufficient access"
+          },
+          "405" : {
+            "description" : "Unsupported request method"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/rooms/{roomName}" : {
+      "get" : {
+        "tags" : [ "ROLE_EMPLOYEE" ],
+        "summary" : "Gets room information",
+        "description" : "Get information on the room with this room name",
+        "operationId" : "getRoomByName",
+        "parameters" : [ {
+          "name" : "roomName",
+          "in" : "path",
+          "description" : "Name of room to return information about",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation"
+          },
+          "400" : {
+            "description" : "Invalid name supplied"
+          },
+          "401" : {
+            "description" : "Need to authenticate before accessing this"
+          },
+          "403" : {
+            "description" : "User is authenticated but has insufficient access"
+          },
+          "404" : {
+            "description" : "Room not found"
+          },
+          "405" : {
+            "description" : "Unsupported request method"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/rooms/{roomName}/availability" : {
+      "get" : {
+        "tags" : [ "ROLE_EMPLOYEE" ],
+        "summary" : "Gets room availability",
+        "description" : "Get availability for the room with this name",
+        "operationId" : "getRoomAvailabilityByName",
+        "parameters" : [ {
+          "name" : "roomName",
+          "in" : "path",
+          "description" : "Name of room to return information about",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "start",
+          "in" : "query",
+          "description" : "Start time filter as Unix timestamp",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "end",
+          "in" : "query",
+          "description" : "End time filter as Unix timestamp",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation"
+          },
+          "400" : {
+            "description" : "Invalid name or parameters supplied"
+          },
+          "401" : {
+            "description" : "Need to authenticate before accessing this"
+          },
+          "403" : {
+            "description" : "User is authenticated but has insufficient access"
+          },
+          "404" : {
+            "description" : "Room not found"
+          },
+          "405" : {
+            "description" : "Unsupported request method"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/admin/clearAllReservations" : {
+      "post" : {
+        "tags" : [ "ROLE_ADMIN" ],
+        "summary" : "Deletes all scheduled reservations",
+        "description" : "Deletes all scheduled reservations (appointments) from the system",
+        "operationId" : "clearAllReservations",
+        "responses" : {
+          "204" : {
+            "description" : "Successful operation, empty response body"
+          },
+          "401" : {
+            "description" : "Need to authenticate before accessing this"
+          },
+          "403" : {
+            "description" : "User is authenticated but has insufficient access"
+          },
+          "405" : {
+            "description" : "Unsupported request method"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/admin/clearAllRooms" : {
+      "post" : {
+        "tags" : [ "ROLE_ADMIN" ],
+        "summary" : "Deletes all rooms",
+        "description" : "Deletes all rooms from the system",
+        "operationId" : "clearAllRooms",
+        "responses" : {
+          "204" : {
+            "description" : "Successful operation, empty response body"
+          },
+          "401" : {
+            "description" : "Need to authenticate before accessing this"
+          },
+          "403" : {
+            "description" : "User is authenticated but has insufficient access"
+          },
+          "405" : {
+            "description" : "Unsupported request method"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "LoginDTO" : {
+        "type" : "object",
+        "properties" : {
+          "username" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "bearerAuth" : {
+        "type" : "http",
+        "scheme" : "bearer",
+        "bearerFormat" : "JWT"
+      }
+    }
+  }
+}

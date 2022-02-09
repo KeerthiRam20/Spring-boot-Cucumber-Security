@@ -1,0 +1,23 @@
+
+# Don't commit the dot dirs or files
+.idea
+.gradle
+.project
+.settings
+.gradletasknamecache
+.vagrant/
+
+# Ignore other IntelliJ IDEA artifacts - developers should generate these via Gradle
+*.iml
+*.ipr
+*.iws
+
+# Ignore build outputs
+build/
+target/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Make sure to include Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
